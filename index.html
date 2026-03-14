@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JalKavach | LiDAR River Intelligence Dashboard</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="landing-page" class="landing-page">
+        <div class="landing-content">
+            <div class="logo">
+                <svg width="60" height="60" viewBox="0 0 60 60">
+                    <path d="M10 30 Q 20 20, 30 30 T 50 30" stroke="#2563eb" stroke-width="3" fill="none"/>
+                    <circle cx="15" cy="28" r="3" fill="#ef4444"/>
+                    <circle cx="30" cy="32" r="3" fill="#f59e0b"/>
+                    <circle cx="45" cy="28" r="3" fill="#10b981"/>
+                </svg>
+            </div>
+            <h1>JalKavach</h1>
+            <p class="subtitle">LiDAR Driven River Intelligence Dashboard</p>
+            <p class="description">Real time erosion monitoring and predictive analytics for riverbank management</p>
+            <button id="explore-btn" class="explore-btn">Explore River Dashboard</button>
+        </div>
+    </div>
+
+    <div id="dashboard" class="dashboard hidden">
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h2>JalKavach</h2>
+                <span class="location" id="location-display">Yamuna River Stretch | Delhi-Agra Corridor</span>
+            </div>
+            <div class="header-center">
+                <label for="river-select" class="river-label">Select River:</label>
+                <select id="river-select" class="river-select">
+                    <option value="yamuna">Yamuna River</option>
+                    <option value="ganga">Ganga River</option>
+                    <option value="brahmaputra">Brahmaputra River</option>
+                    <option value="godavari">Godavari River</option>
+                    <option value="narmada">Narmada River</option>
+                    <option value="custom">+ Add Custom River</option>
+                </select>
+            </div>
+            <div class="header-right">
+                <span class="status-indicator">● Live</span>
+                <span class="last-updated" id="last-updated">Last Updated: Loading...</span>
+            </div>
+        </header>
+
+        <div class="dashboard-content">
+            <aside class="sidebar-left">
+                <div class="control-section">
+                    <h3>Map Layers</h3>
+                    <div class="layer-controls">
+                        <label class="layer-toggle">
+                            <input type="checkbox" id="layer-satellite" checked>
+                            <span>Satellite Imagery</span>
+                        </label>
+                        <label class="layer-toggle">
+                            <input type="checkbox" id="layer-lidar">
+                            <span>LiDAR Hillshade</span>
+                        </label>
+                        <label class="layer-toggle">
+                            <input type="checkbox" id="layer-elevation" checked>
+                            <span>Elevation/Slope</span>
+                        </label>
+                        <label class="layer-toggle">
+                            <input type="checkbox" id="layer-erosion" checked>
+                            <span>Erosion Hotspots</span>
+                        </label>
+                        <label class="layer-toggle">
+                            <input type="checkbox" id="layer-sedimentation" checked>
+                            <span>Sedimentation Hotspots</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>Scenario Simulator</h3>
+                    <div class="scenario-control">
+                        <label>River Discharge</label>
+                        <input type="range" id="discharge-slider" min="0" max="3" value="0" step="1">
+                        <div class="discharge-labels">
+                            <span>Normal</span>
+                            <span>+10%</span>
+                            <span>+30%</span>
+                            <span>+50%</span>
+                        </div>
+                        <div class="discharge-value" id="discharge-value">Normal Flow</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>Digital Twin Timeline</h3>
+                    <div class="timeline-control">
+                        <input type="range" id="time-slider" min="0" max="4" value="4" step="1">
+                        <div class="timeline-labels">
+                            <span>2020</span>
+                            <span>2021</span>
+                            <span>2022</span>
+                            <span>2023</span>
+                            <span>2024</span>
+                        </div>
+                        <div class="timeline-value" id="timeline-value">Current: December 2024</div>
+                    </div>
+                </div>
+
+                <div class="control-section">
+                    <h3>Upload LiDAR Data</h3>
+                    <div class="upload-control">
+                        <label for="lidar-upload" class="upload-btn">
+                            <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                                <path d="M8 0L4 4h2.5v4h3V4H12L8 0z"/>
+                                <path d="M14 8v6H2V8H0v6a2 2 0 002 2h12a2 2 0 002-2V8h-2z"/>
+                            </svg>
+                            Choose LiDAR File
+                        </label>
+                        <input type="file" id="lidar-upload" accept=".tif,.tiff,.las,.laz,.geojson,.json" hidden>
+                        <div class="upload-info" id="upload-info">No file selected</div>
+                        <button id="process-lidar" class="process-btn" disabled>Process & Display</button>
+                    </div>
+                </div>
+
+                <div class="control-section stats">
+                    <h3>Risk Summary</h3>
+                    <div class="stat-item">
+                        <span class="stat-label">Critical Zones</span>
+                        <span class="stat-value critical" id="critical-count">8</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">High Risk Zones</span>
+                        <span class="stat-value high" id="high-count">15</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Moderate Risk</span>
+                        <span class="stat-value moderate" id="moderate-count">23</span>
+                    </div>
+                </div>
+            </aside>
+
+            <main class="map-container">
+                <div id="map"></div>
+                <button class="community-fab" id="community-fab" title="Community Engagement">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                    </svg>
+                </button>
+            </main>
+
+            <aside class="sidebar-right hidden" id="details-panel">
+                <div class="panel-header">
+                    <h3>Hotspot Analysis</h3>
+                    <button class="close-btn" id="close-panel">×</button>
+                </div>
+                <div class="panel-content">
+                    <div class="hotspot-info">
+                        <div class="info-row">
+                            <span class="label">Location ID:</span>
+                            <span class="value" id="hotspot-id">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Risk Severity:</span>
+                            <span class="value severity" id="hotspot-severity">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Dominant Issue:</span>
+                            <span class="value" id="hotspot-issue">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Est. Time to Failure:</span>
+                            <span class="value" id="hotspot-failure">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Erosion Rate:</span>
+                            <span class="value" id="hotspot-rate">-</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="label">Affected Area:</span>
+                            <span class="value" id="hotspot-area">-</span>
+                        </div>
+                    </div>
+                    <div id="chart-container"></div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <!-- Community Engagement Modal -->
+    <div id="community-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Community Engagement</h2>
+                <button class="close-btn" id="close-community-modal">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="community-tabs">
+                    <button class="tab-btn active" data-tab="report">Report Issue</button>
+                    <button class="tab-btn" data-tab="reports">Community Reports</button>
+                    <button class="tab-btn" data-tab="alerts">Subscribe Alerts</button>
+                </div>
+
+                <!-- Report Issue Tab -->
+                <div class="tab-content active" id="report-tab">
+                    <form id="report-form">
+                        <div class="form-group">
+                            <label>Issue Type</label>
+                            <select id="issue-type" required>
+                                <option value="">Select issue type</option>
+                                <option value="erosion">Bank Erosion</option>
+                                <option value="flooding">Flooding</option>
+                                <option value="pollution">Water Pollution</option>
+                                <option value="debris">Debris Accumulation</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Location Description</label>
+                            <input type="text" id="issue-location" placeholder="e.g., Near bridge, Village name" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Severity</label>
+                            <select id="issue-severity" required>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea id="issue-description" rows="4" placeholder="Describe the issue in detail..." required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Your Name (Optional)</label>
+                            <input type="text" id="reporter-name" placeholder="Anonymous">
+                        </div>
+                        <div class="form-group">
+                            <label>Contact (Optional)</label>
+                            <input type="text" id="reporter-contact" placeholder="Email or Phone">
+                        </div>
+                        <button type="submit" class="submit-btn">Submit Report</button>
+                    </form>
+                </div>
+
+                <!-- Community Reports Tab -->
+                <div class="tab-content" id="reports-tab">
+                    <div class="reports-filter">
+                        <select id="reports-filter">
+                            <option value="all">All Reports</option>
+                            <option value="erosion">Erosion</option>
+                            <option value="flooding">Flooding</option>
+                            <option value="pollution">Pollution</option>
+                        </select>
+                        <span class="reports-count" id="reports-count">12 reports</span>
+                    </div>
+                    <div class="reports-list" id="reports-list">
+                        <!-- Reports will be dynamically added here -->
+                    </div>
+                </div>
+
+                <!-- Subscribe Alerts Tab -->
+                <div class="tab-content" id="alerts-tab">
+                    <div class="alerts-info">
+                        <p>Get notified about critical erosion events and flood warnings in your area.</p>
+                    </div>
+                    <form id="alerts-form">
+                        <div class="form-group">
+                            <label>Email Address</label>
+                            <input type="email" id="alert-email" placeholder="your@email.com" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Phone Number (Optional)</label>
+                            <input type="tel" id="alert-phone" placeholder="+91 XXXXXXXXXX">
+                        </div>
+                        <div class="form-group">
+                            <label>Alert Preferences</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> Critical Erosion Alerts
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" checked> Flood Warnings
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Weekly Summary
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox"> Monthly Reports
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Monitoring Radius</label>
+                            <select id="alert-radius">
+                                <option value="5">5 km</option>
+                                <option value="10" selected>10 km</option>
+                                <option value="25">25 km</option>
+                                <option value="50">50 km</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="submit-btn">Subscribe to Alerts</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

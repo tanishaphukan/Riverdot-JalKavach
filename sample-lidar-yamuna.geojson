@@ -1,0 +1,166 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Yamuna Riverbank Section A",
+        "elevation_min": 185.2,
+        "elevation_max": 198.5,
+        "slope_avg": 12.3,
+        "erosion_risk": "High",
+        "scan_date": "2024-11-15",
+        "resolution": "1m",
+        "point_density": "15 pts/m²"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.99, 27.50],
+            [78.01, 27.50],
+            [78.01, 27.48],
+            [77.99, 27.48],
+            [77.99, 27.50]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Yamuna Riverbank Section B",
+        "elevation_min": 182.8,
+        "elevation_max": 195.1,
+        "slope_avg": 15.7,
+        "erosion_risk": "Critical",
+        "scan_date": "2024-11-15",
+        "resolution": "1m",
+        "point_density": "18 pts/m²"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.01, 27.50],
+            [78.03, 27.50],
+            [78.03, 27.48],
+            [78.01, 27.48],
+            [78.01, 27.50]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Yamuna Riverbank Section C",
+        "elevation_min": 188.5,
+        "elevation_max": 201.2,
+        "slope_avg": 8.9,
+        "erosion_risk": "Moderate",
+        "scan_date": "2024-11-15",
+        "resolution": "1m",
+        "point_density": "12 pts/m²"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.99, 27.48],
+            [78.01, 27.48],
+            [78.01, 27.46],
+            [77.99, 27.46],
+            [77.99, 27.48]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Erosion Hotspot Zone",
+        "elevation_min": 180.3,
+        "elevation_max": 192.8,
+        "slope_avg": 18.5,
+        "erosion_risk": "Critical",
+        "scan_date": "2024-11-15",
+        "resolution": "0.5m",
+        "point_density": "25 pts/m²",
+        "bank_retreat_rate": "2.3 m/year"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [78.005, 27.495],
+            [78.015, 27.495],
+            [78.015, 27.485],
+            [78.005, 27.485],
+            [78.005, 27.495]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "Cross Section Line",
+        "length_m": 450,
+        "profile": "Bank to Channel",
+        "scan_date": "2024-11-15"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [77.995, 27.495],
+          [78.000, 27.492],
+          [78.005, 27.490],
+          [78.010, 27.488]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "Monitoring Point",
+        "station_id": "YAM-MP-001",
+        "elevation": 186.5,
+        "last_measurement": "2024-12-20",
+        "displacement_mm": 45
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.000, 27.490]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "Monitoring Point",
+        "station_id": "YAM-MP-002",
+        "elevation": 189.2,
+        "last_measurement": "2024-12-20",
+        "displacement_mm": 32
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.010, 27.485]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "type": "Monitoring Point",
+        "station_id": "YAM-MP-003",
+        "elevation": 191.8,
+        "last_measurement": "2024-12-20",
+        "displacement_mm": 58
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [78.020, 27.480]
+      }
+    }
+  ]
+}
